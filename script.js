@@ -1,7 +1,8 @@
 class dailyActivities {
-    constructor(){
+    constructor(name){
         this.morningActivities = [],
         this.afternoonActivities = []
+        this.name = name;
     }
 
    /* showActivities() {
@@ -26,17 +27,30 @@ class activity {
     showTime(){
         return (`${this.hour}:${this.minutes}`)
     }
+
+    timeToFilter(){
+        return parseInt(`${this.hour}${this.minutes}`)
+    }
+
 }
 
-const monday = new dailyActivities();
+/*const monday = new dailyActivities();
 const tuesday = new dailyActivities();
 const wednesday = new dailyActivities();
 const thursday = new dailyActivities();
 const friday = new dailyActivities();
 const saturday = new dailyActivities();
-const sunday = new dailyActivities();
+const sunday = new dailyActivities();*/
 
-
+/* ES MEJOR USAR UN ARRAY : dias */
+let dias = [];
+dias.push(new dailyActivities(`LUNES`));
+dias.push(new dailyActivities(`MARTES`));
+dias.push(new dailyActivities(`MIERCOLES`));
+dias.push(new dailyActivities(`JUEVES`));
+dias.push(new dailyActivities(`VIERNES`));
+dias.push(new dailyActivities(`SABADO`));
+dias.push(new dailyActivities(`DOMINGO`));
 
 const activityArraySelector = (object,name,hour,minutes,place,comment) => { /* */
     if ( hour < 12) {
@@ -44,6 +58,47 @@ const activityArraySelector = (object,name,hour,minutes,place,comment) => { /* *
         return;
     }
     object.afternoonActivities.push(new activity(name,hour,minutes,place,comment));
+}
+
+const showSchedule = () => {
+    let scheduleString = `LUNES :\n`;
+    let counter = 0;
+
+    scheduleString += `MANANA:\n`
+    for (element of monday.morningActivities) {
+        scheduleString += `HORA: ${element.showTime()}  ACTIVIDAD: ${element[counter].name} `
+
+        if (element.place !== ``){
+            scheduleString += `LUGAR: ${element.place}  `
+        }
+
+        if (element.comment !== ``){
+            scheduleString += `COMENTARIO: ${element.comment} `
+        }
+
+        scheduleString +=  `\n`
+    }
+
+    scheduleString +=  `\n \n`
+
+    scheduleString +=  `TARDE`
+
+
+    return alert (scheduleString)
+}
+
+const timeFilter = () => {
+    dias[0].afternoonActivities.sort( (a,b) => {
+        if(a.timeToFilter() < b.timeToFilter()) {
+            return 1;
+        }
+
+        if(a.timeToFilter() > b.timeToFilter()){
+            return -1;
+        }
+
+        return 0;
+    })
 }
 
 const addNewActivity = () => { /* */
@@ -111,43 +166,31 @@ const addNewActivity = () => { /* */
 
         switch(day) {
             case `lunes`:
-                activityArraySelector(monday,name,hour,minutes,place,comment);
-                console.log(monday.morningActivities)
-                console.log(monday.afternoonActivities)
+                activityArraySelector(dias[0],name,hour,minutes,place,comment);
                 break;
             case `martes`:
-                activityArraySelector(tuesday,name,hour,minutes,place,comment);
-                console.log(tuesday.morningActivities)
-                console.log(tuesday.afternoonActivities)
+                activityArraySelector(dias[1],name,hour,minutes,place,comment);
                 break;
             case `miercoles`:
-                activityArraySelector(wednesday,name,hour,minutes,place,comment);
-                console.log(wednesday.morningActivities)
-                console.log(wednesday.afternoonActivities)
+                activityArraySelector(dias[2],name,hour,minutes,place,comment);
                 break;
             case `jueves`:
-                activityArraySelector(thursday,name,hour,minutes,place,comment);
-                console.log(thursday.morningActivities)
-                console.log(thursday.afternoonActivities)
+                activityArraySelector(dias[3],name,hour,minutes,place,comment);
                 break;
             case  `viernes`:
-                activityArraySelector(friday,name,hour,minutes,place,comment);
-                console.log(friday.morningActivities)
-                console.log(friday.afternoonActivities)
+                activityArraySelector(dias[4],name,hour,minutes,place,comment);
                 break;
             case `sabado`:
-                activityArraySelector(saturday,name,hour,minutes,place,comment);
-                console.log(saturday.morningActivities)
-                console.log(saturday.afternoonActivities)
+                activityArraySelector(dias[5],name,hour,minutes,place,comment);
                 break;
             case `domingo`:
-                activityArraySelector(sunday,name,hour,minutes,place,comment);
-                console.log(sunday.morningActivities)
-                console.log(sunday.afternoonActivities)
+                activityArraySelector(dias[6],name,hour,minutes,place,comment);
                 break;
         }
 
     } while(exit !== `SALIR`)
+
+    timeFilter()
 }
 
 addNewActivity()
