@@ -4,15 +4,6 @@ class dailyActivities {
         this.afternoonActivities = []
         this.name = name;
     }
-
-   /* showActivities() {
-    activitiesString = ``;
-    counter = 0;
-    for(element of this.morningActivities) {
-         activitiesString = this.morningActivities[counter]
-        }
-    }*/
-
 }
 
 class activity {
@@ -25,24 +16,30 @@ class activity {
     }
 
     showTime(){
-        return (`${this.hour}:${this.minutes}`)
+        let returnString =`${this.hour}`;
+
+        if(this.minutes !== 0){
+            returnString += `:${this.minutes}`
+        }
+
+        return (returnString)
     }
 
     timeToFilter(){
-        return parseInt(`${this.hour}${this.minutes}`)
+        let returnString = `${this.hour}`;
+
+        if(this.minutes !== 0){
+            returnString += `${this.minutes}`
+        }
+
+        if (this.minutes === 0){
+            returnString += `00`;
+        }
+        return parseInt(returnString)
     }
 
 }
 
-/*const monday = new dailyActivities();
-const tuesday = new dailyActivities();
-const wednesday = new dailyActivities();
-const thursday = new dailyActivities();
-const friday = new dailyActivities();
-const saturday = new dailyActivities();
-const sunday = new dailyActivities();*/
-
-/* ES MEJOR USAR UN ARRAY : dias */
 let dias = [];
 dias.push(new dailyActivities(`LUNES`));
 dias.push(new dailyActivities(`MARTES`));
@@ -60,45 +57,77 @@ const activityArraySelector = (object,name,hour,minutes,place,comment) => { /* *
     object.afternoonActivities.push(new activity(name,hour,minutes,place,comment));
 }
 
-const showSchedule = () => {
-    let scheduleString = `LUNES :\n`;
-    let counter = 0;
+const updateString = (element, string) => {
+    string = `  HORA: ${element.showTime()}  ACTIVIDAD: ${element.name} `;
 
-    scheduleString += `MANANA:\n`
-    for (element of monday.morningActivities) {
-        scheduleString += `HORA: ${element.showTime()}  ACTIVIDAD: ${element[counter].name} `
-
-        if (element.place !== ``){
-            scheduleString += `LUGAR: ${element.place}  `
-        }
-
-        if (element.comment !== ``){
-            scheduleString += `COMENTARIO: ${element.comment} `
-        }
-
-        scheduleString +=  `\n`
+    if (element.place !== ``){
+        string  += `LUGAR: ${element.place}  `
     }
 
-    scheduleString +=  `\n \n`
+    if (element.comment !== ``){
+        string  += `COMENTARIO: ${element.comment} `
+    }
+    string += `\n`
 
-    scheduleString +=  `TARDE`
+    return(string);
+}
 
+const showSchedule = () => {
+    let scheduleString = ``;
 
-    return alert (scheduleString)
+    let diasOcupados = dias.filter(element => {
+        return (element.morningActivities.length !== 0 || element.afternoonActivities.length !== 0)
+    });
+
+    console.log(diasOcupados);
+
+    for (day of diasOcupados){
+        if(day.morningActivities.length !== 0){
+            scheduleString += `${day.name}\n MANANA:\n`
+            day.morningActivities.forEach (element => {
+                scheduleString += updateString(element,scheduleString);
+            })
+        }
+
+        if(day.afternoonActivities.length !== 0){
+            scheduleString += ` TARDE\n`
+
+            day.afternoonActivities.forEach(element => {
+                scheduleString += updateString(element,scheduleString);
+            })
+        }
+        scheduleString += `\n`;
+    }
+
+    return alert (scheduleString);
 }
 
 const timeFilter = () => {
-    dias[0].afternoonActivities.sort( (a,b) => {
+    for (day of dias){
+    day.afternoonActivities.sort( (a,b) => {
         if(a.timeToFilter() < b.timeToFilter()) {
-            return 1;
+            return -1;
         }
 
         if(a.timeToFilter() > b.timeToFilter()){
-            return -1;
+            return 1;
         }
 
         return 0;
     })
+
+    day.morningActivities.sort( (a,b) => {
+        if(a.timeToFilter() < b.timeToFilter()) {
+            return -1;
+        }
+
+        if(a.timeToFilter() > b.timeToFilter()){
+            return 1;
+        }
+
+        return 0;
+    })
+    }
 }
 
 const addNewActivity = () => { /* */
@@ -111,7 +140,7 @@ const addNewActivity = () => { /* */
     let name = ``;
 
     do{
-        exit = parseInt(prompt(`Desea agregar una nueva actividad a su lista semanal? \n1- SI \n2-NO`));
+        exit = parseInt(prompt(`Desea agregar una nueva actividad a su lista semanal? \n1- SI \n2- NO`));
 
         if (exit !== 1 && exit !== 2){
             alert(`Recuerde que debe ingresar un numero entre 1 y 2`);
@@ -187,10 +216,11 @@ const addNewActivity = () => { /* */
                 activityArraySelector(dias[6],name,hour,minutes,place,comment);
                 break;
         }
-
+        console.log[dias]
     } while(exit !== `SALIR`)
 
     timeFilter()
+    showSchedule()
 }
 
 addNewActivity()
